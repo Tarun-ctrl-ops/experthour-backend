@@ -4,6 +4,7 @@ import com.example.experthour.dto.BookingResponse;
 import com.example.experthour.dto.CreateBookingRequest;
 import com.example.experthour.exception.ResourceNotFoundException;
 import com.example.experthour.exception.ValidationException;
+import com.example.experthour.model.Availability;
 import com.example.experthour.model.Booking;
 import com.example.experthour.model.BookingStatus;
 import com.example.experthour.repository.AvailabilityRepository;
@@ -11,6 +12,7 @@ import com.example.experthour.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +34,7 @@ public class BookingService {
 
     public BookingResponse createBooking(CreateBookingRequest request) {
 
-        // 1️⃣ Basic time validation
+        // 1️⃣ Time validation
         if (request.getEndTime().isBefore(request.getStartTime())) {
             throw new ValidationException("End time must be after start time");
         }
@@ -46,7 +48,7 @@ public class BookingService {
             throw new ValidationException("Booking duration must be at least 1 hour");
         }
 
-        // 2️⃣ AVAILABILITY CHECK (THIS IS THE NEW PART)
+        // 2️⃣ Availability validation
         boolean available = availabilityRepository
                 .existsByExpertIdAndStartTimeLessThanAndEndTimeGreaterThan(
                         request.getExpertId(),
@@ -58,10 +60,17 @@ public class BookingService {
             throw new ValidationException("Expert is not available for this time slot");
         }
 
-        // 3️⃣ Pricing logic
-        double price = hours * 1000; // simple pricing for now
+        // 3️⃣ CONSUME SLOT (NEW)
+        consumeAvailability(
+                request.getExpertId(),
+                request.getStartTime(),
+                request.getEndTime()
+        );
 
-        // 4️⃣ Save booking
+        // 4️⃣ Pricing
+        double price = hours * 1000;
+
+        // 5️⃣ Save booking
         Booking booking = Booking.builder()
                 .userId(request.getUserId())
                 .expertId(request.getExpertId())
@@ -106,5 +115,55 @@ public class BookingService {
                 .price(booking.getPrice())
                 .status(booking.getStatus())
                 .build();
+    }
+
+    private void consumeAvailability(
+            UUID expertId,
+            LocalDateTime bookingStart,
+            LocalDateTime bookingEnd
+    ) {
+        // Find all availability slots for expert
+        List<Availability> slots =
+                availabilityRepository.findByExpertId(expertId);
+
+        for (Availability slot : slots) {
+
+            // Booking fits inside this slot
+            boolean fits =
+                    !bookingStart.isBefore(slot.getStartTime()) &&
+                            !bookingEnd.isAfter(slot.getEndTime());
+
+            if (fits) {
+
+                // Remove the original slot
+                availabilityRepository.delete(slot);
+
+                // Left remaining slot
+                if (bookingStart.isAfter(slot.getStartTime())) {
+                    availabilityRepository.save(
+                            Availability.builder()
+                                    .expertId(expertId)
+                                    .startTime(slot.getStartTime())
+                                    .endTime(bookingStart)
+                                    .build()
+                    );
+                }
+
+                // Right remaining slot
+                if (bookingEnd.isBefore(slot.getEndTime())) {
+                    availabilityRepository.save(
+                            Availability.builder()
+                                    .expertId(expertId)
+                                    .startTime(bookingEnd)
+                                    .endTime(slot.getEndTime())
+                                    .build()
+                    );
+                }
+
+                return; // important: stop after consuming one slot
+            }
+        }
+
+        throw new ValidationException("No matching availability slot found");
     }
 }

@@ -22,4 +22,6 @@ public class CreateBookingRequest {
 
     @NotNull(message = "End time is required")
     private LocalDateTime endTime;
+
+
 }
