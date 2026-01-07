@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/client";
 
 export default function AvailabilityPage() {
   const [experts, setExperts] = useState([]);
@@ -9,22 +9,47 @@ export default function AvailabilityPage() {
   const [endTime, setEndTime] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/experts").then(r => setExperts(r.data));
+    loadExperts();
     loadSlots();
   }, []);
 
+  const loadExperts = async () => {
+    try {
+      const res = await api.get("/experts");
+      setExperts(res.data);
+    } catch (err) {
+      console.error("Failed to load experts", err);
+    }
+  };
+
   const loadSlots = async () => {
-    const res = await axios.get("http://localhost:8080/api/availability");
-    setSlots(res.data);
+    try {
+      const res = await api.get("/availability");
+      setSlots(res.data);
+    } catch (err) {
+      console.error("Failed to load slots", err);
+    }
   };
 
   const createSlot = async () => {
-    await axios.post("http://localhost:8080/api/availability", {
-      expertId,
-      startTime,
-      endTime
-    });
-    loadSlots();
+    if (!expertId || !startTime || !endTime) {
+      alert("Select expert and time");
+      return;
+    }
+
+    try {
+      await api.post("/availability", {
+        expertId,
+        startTime,
+        endTime,
+      });
+
+      setStartTime("");
+      setEndTime("");
+      loadSlots();
+    } catch (err) {
+      console.error("Failed to create slot", err);
+    }
   };
 
   return (
@@ -32,15 +57,26 @@ export default function AvailabilityPage() {
       <h2>Availability</h2>
 
       <div className="card">
-        <select onChange={e => setExpertId(e.target.value)}>
-          <option>Select Expert</option>
+        <select value={expertId} onChange={e => setExpertId(e.target.value)}>
+          <option value="">Select Expert</option>
           {experts.map(e => (
-            <option key={e.id} value={e.id}>{e.name}</option>
+            <option key={e.id} value={e.id}>
+              {e.name}
+            </option>
           ))}
         </select>
 
-        <input type="datetime-local" onChange={e => setStartTime(e.target.value)} />
-        <input type="datetime-local" onChange={e => setEndTime(e.target.value)} />
+        <input
+          type="datetime-local"
+          value={startTime}
+          onChange={e => setStartTime(e.target.value)}
+        />
+
+        <input
+          type="datetime-local"
+          value={endTime}
+          onChange={e => setEndTime(e.target.value)}
+        />
 
         <button onClick={createSlot}>Add Slot</button>
       </div>
@@ -49,7 +85,7 @@ export default function AvailabilityPage() {
 
       {slots.map(s => (
         <div className="card" key={s.id}>
-          <b>{s.expertName || s.expertId}</b><br />
+          <b>{s.expert?.name || s.expertId}</b><br />
           {s.startTime} → {s.endTime}
         </div>
       ))}
