@@ -51,10 +51,7 @@
 		</dependency>
 		<!-- Spring Web, Security, JPA, H2, Validation, Lombok, jjwt -->
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+
 
 
 		<dependency>
