@@ -41,4 +41,9 @@ public class BookingController {
     public void cancelBooking(@PathVariable UUID id) {
         bookingService.cancelBooking(id);
     }
+
+    @GetMapping
+    public List<BookingResponse> getAllBookings() {
+        return bookingService.getAllBookings();
+    }
 }

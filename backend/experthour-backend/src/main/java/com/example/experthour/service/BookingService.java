@@ -89,6 +89,12 @@ public class BookingService {
                 .map(this::toResponse)
                 .toList();
     }
+    public List<BookingResponse> getAllBookings() {
+        return bookingRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 
     public List<BookingResponse> getBookingsByExpert(UUID expertId) {
         return bookingRepository.findByExpertId(expertId)
