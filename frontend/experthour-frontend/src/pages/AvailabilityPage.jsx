@@ -22,9 +22,14 @@ export default function AvailabilityPage() {
     }
   };
 
-  const loadSlots = async () => {
+  const loadSlots = async (id = expertId) => {
+    if (!id) {
+      setSlots([]);
+      return;
+    }
+
     try {
-      const res = await api.get("/availability");
+      const res = await api.get(`/availability?expertId=${id}`);
       setSlots(res.data);
     } catch (err) {
       console.error("Failed to load slots", err);
@@ -44,9 +49,7 @@ export default function AvailabilityPage() {
         endTime,
       });
 
-      setStartTime("");
-      setEndTime("");
-      loadSlots();
+      loadSlots(expertId);
     } catch (err) {
       console.error("Failed to create slot", err);
     }
@@ -57,7 +60,13 @@ export default function AvailabilityPage() {
       <h2>Availability</h2>
 
       <div className="card">
-        <select value={expertId} onChange={e => setExpertId(e.target.value)}>
+        <select
+          value={expertId}
+          onChange={e => {
+            setExpertId(e.target.value);
+            loadSlots(e.target.value);
+          }}
+        >
           <option value="">Select Expert</option>
           {experts.map(e => (
             <option key={e.id} value={e.id}>
