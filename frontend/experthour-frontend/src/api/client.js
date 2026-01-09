@@ -1,10 +1,16 @@
 import axios from "axios";
+import { getToken } from "../utils/auth";
 
-const api = axios.create({
-  baseURL: "https://experthour-backend.onrender.com/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
+const client = axios.create({
+  baseURL: "http://localhost:8080/api"
 });
 
-export default api;
+client.interceptors.request.use(config => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default client;

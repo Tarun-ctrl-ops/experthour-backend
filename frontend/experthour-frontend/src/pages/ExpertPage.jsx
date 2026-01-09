@@ -4,7 +4,11 @@ import { getAllExperts, createExpert } from "../api/expertApi";
 export default function ExpertPage() {
   const [experts, setExperts] = useState([]);
   const [form, setForm] = useState({
-    name: "", email: "", domain: "", experience: "", hourlyRate: ""
+    name: "",
+    title: "",
+    skills: "",
+    pricePerHour: "",
+    bio: ""
   });
 
   const loadExperts = async () => {
@@ -19,10 +23,9 @@ export default function ExpertPage() {
     e.preventDefault();
     await createExpert({
       ...form,
-      experience: Number(form.experience),
-      hourlyRate: Number(form.hourlyRate),
+      pricePerHour: Number(form.pricePerHour),
     });
-    setForm({ name:"", email:"", domain:"", experience:"", hourlyRate:"" });
+    setForm({ name:"", title:"", skills:"", pricePerHour:"", bio:"" });
     loadExperts();
   };
 
@@ -31,15 +34,16 @@ export default function ExpertPage() {
       <h2>Experts</h2>
       <form onSubmit={submit}>
         {Object.keys(form).map(k => (
-          <input key={k} placeholder={k} value={form[k]}
-            onChange={e => setForm({ ...form, [k]: e.target.value })} required />
+          <input key={k} value={form[k]}
+            onChange={e => setForm({ ...form, [k]: e.target.value })}
+            placeholder={k} required />
         ))}
-        <button>Create</button>
+        <button>Create Expert</button>
       </form>
 
       <ul>
         {experts.map(e => (
-          <li key={e.id}>{e.name} — {e.domain}</li>
+          <li key={e.id}>{e.name} — {e.skills} — ₹{e.pricePerHour}</li>
         ))}
       </ul>
     </>

@@ -1,108 +1,39 @@
 import { useEffect, useState } from "react";
-import { getExperts } from "../api/expertApi";
-import {
-  getAvailability,
-  createAvailability,
-} from "../api/availabilityApi";
+import { getAllExperts, setAvailability } from "../api/expertApi";
 
 export default function AvailabilityPage() {
   const [experts, setExperts] = useState([]);
-  const [slots, setSlots] = useState([]);
-  const [expertId, setExpertId] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [selected, setSelected] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   useEffect(() => {
-    loadExperts();
+    getAllExperts().then(setExperts);
   }, []);
 
-  const loadExperts = async () => {
-    try {
-      const res = await getExperts();
-      setExperts(res.data);
-    } catch (err) {
-      console.error("Failed to load experts", err);
-    }
-  };
-
-  const loadSlots = async (id) => {
-    if (!id) {
-      setSlots([]);
-      return;
-    }
-
-    try {
-      const res = await getAvailability(id);
-      setSlots(res.data);
-    } catch (err) {
-      console.error("Failed to load slots", err);
-    }
-  };
-
-  const createSlot = async () => {
-    if (!expertId || !startTime || !endTime) {
-      alert("Select expert and time");
-      return;
-    }
-
-    try {
-      await createAvailability({
-        expertId,
-        startTime,
-        endTime,
-      });
-
-      loadSlots(expertId);
-    } catch (err) {
-      console.error("Failed to create slot", err);
-    }
+  const submit = async (e) => {
+    e.preventDefault();
+    await setAvailability(selected, from, to);
+    alert("Availability updated");
   };
 
   return (
     <>
-      <h2>Availability</h2>
+      <h2>Set Availability</h2>
 
-      <div className="card">
-        <select
-          value={expertId}
-          onChange={(e) => {
-            const id = e.target.value;
-            setExpertId(id);
-            loadSlots(id);
-          }}
-        >
-          <option value="">Select Expert</option>
-          {experts.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.name}
-            </option>
+      <form onSubmit={submit}>
+        <select value={selected} onChange={e => setSelected(e.target.value)} required>
+          <option value="">Select expert</option>
+          {experts.map(e => (
+            <option key={e.id} value={e.id}>{e.name}</option>
           ))}
         </select>
 
-        <input
-          type="datetime-local"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-        />
+        <input value={from} onChange={e => setFrom(e.target.value)} placeholder="From (09:00)" />
+        <input value={to} onChange={e => setTo(e.target.value)} placeholder="To (17:00)" />
 
-        <input
-          type="datetime-local"
-          value={endTime}
-          onChange={(e) => setEndTime(e.target.value)}
-        />
-
-        <button onClick={createSlot}>Add Slot</button>
-      </div>
-
-      <h3>Slots</h3>
-
-      {slots.map((s) => (
-        <div className="card" key={s.id}>
-          <b>{s.expert?.name || s.expertId}</b>
-          <br />
-          {s.startTime} → {s.endTime}
-        </div>
-      ))}
+        <button>Save</button>
+      </form>
     </>
   );
 }
