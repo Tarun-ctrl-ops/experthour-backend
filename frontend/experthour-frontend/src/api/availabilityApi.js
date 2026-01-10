@@ -1,8 +1,4 @@
-import { setAvailability } from "./expertApi";
-export { setAvailability };
+import api from "./client";
 
 export const getAvailability = (expertId) =>
-  api.get(`/availability?expertId=${expertId}`);
-
-export const createAvailability = (data) =>
-  api.post("/availability", data);
+  api.get(`/experts/${expertId}/availability`).then(r => r.data);

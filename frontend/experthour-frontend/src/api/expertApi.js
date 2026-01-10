@@ -1,18 +1,7 @@
-import client from "./client";
+import api from "./client";
 
-export const getAllExperts = async () => {
-  const res = await client.get("/experts");
-  return res.data;
-};
-
-export const createExpert = async (data) => {
-  const res = await client.post("/experts", data);
-  return res.data;
-};
-
-export const setAvailability = async (id, from, to) => {
-  const res = await client.put(`/experts/${id}/availability`, { from, to });
-  return res.data;
-};
-
+export const getAllExperts = () => api.get("/experts").then(r => r.data);
+export const createExpert = (data) => api.post("/experts", data);
+export const setAvailability = (id, from, to) =>
+  api.post(`/experts/${id}/availability`, { from, to });
 

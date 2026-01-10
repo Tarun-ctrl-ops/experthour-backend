@@ -1,11 +1,4 @@
-import client from "./client";
+import api from "./client";
 
-export const register = async (data) => {
-  const res = await client.post("/auth/register", data);
-  return res.data;
-};
-
-export const login = async (email, password) => {
-  const res = await client.post("/auth/login", { email, password });
-  return res.data;
-};
+export const register = (data) => api.post("/auth/register", data);
+export const login = (data) => api.post("/auth/login", data);

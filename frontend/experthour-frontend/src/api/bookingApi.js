@@ -1,16 +1,5 @@
-import client from "./client";
+import api from "./client";
 
-export const createBooking = async (expertId, start, end) => {
-  const res = await client.post("/bookings", {
-    expertId,
-    start,
-    end
-  });
-  return res.data;
-};
-
-export const getMyBookings = async () => {
-  const res = await client.get("/bookings/my");
-  return res.data;
-};
+export const bookExpert = (expertId, start, end) =>
+  api.post(`/bookings/${expertId}`, { start, end });
 
