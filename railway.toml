@@ -1,0 +1,4 @@
+[deploy]
+startCommand = "java -jar target/ExpertHour-0.0.1-SNAPSHOT.jar"
+healthcheckPath = "/api/experts"
+healthcheckTimeout = 100
