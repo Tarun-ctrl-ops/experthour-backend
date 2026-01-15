@@ -24,6 +24,16 @@ public class JwtFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
         this.userDetailsService = uds;
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        return path.startsWith("/api/auth")
+                || path.startsWith("/actuator")
+                || path.startsWith("/error")
+                || path.equals("/favicon.ico");
+    }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
