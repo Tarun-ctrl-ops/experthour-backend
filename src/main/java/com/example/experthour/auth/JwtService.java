@@ -16,14 +16,16 @@ public class JwtService {
 
     private static final long EXPIRATION = 1000 * 60 * 60 * 24; // 24 hours
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(SignatureAlgorithm.HS256, secret.getBytes())
                 .compact();
     }
+
 
     public String extractEmail(String token) {
         return getClaims(token).getSubject();

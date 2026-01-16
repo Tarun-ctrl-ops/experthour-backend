@@ -12,21 +12,29 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final JwtService jwt;
 
-    public AuthService(UserRepository repo, PasswordEncoder encoder, JwtService jwt) {
+    public AuthService(UserRepository repo,
+                       PasswordEncoder encoder,
+                       JwtService jwt) {
         this.repo = repo;
         this.encoder = encoder;
         this.jwt = jwt;
     }
 
-    public AuthResponse signup(SignupRequest req) {
-        User user = new User(req.name, req.email, encoder.encode(req.password), "USER");
-        repo.save(user);
-        return new AuthResponse(jwt.generateToken(user.getEmail()), user.getRole());
+    public User authenticate(String email, String password) {
+
+        User user = repo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        return user;
     }
 
-    public AuthResponse login(LoginRequest req) {
-        User user = repo.findByEmail(req.email).orElseThrow();
-        if (!encoder.matches(req.password, user.getPassword())) throw new RuntimeException("Invalid credentials");
-        return new AuthResponse(jwt.generateToken(user.getEmail()), user.getRole());
+    public String generateToken(User user) {
+        return jwt.generateToken(user.getEmail(), user.getRole());
     }
+
 }
+
