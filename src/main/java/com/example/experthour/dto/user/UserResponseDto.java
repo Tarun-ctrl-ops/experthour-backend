@@ -14,7 +14,22 @@ public class UserResponseDto {
         this.role = role;
     }
 
-    // getters & setters
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRole() {
+        return role;
+    }
 }
+
 
 
