@@ -34,8 +34,14 @@ public class Booking {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    private LocalDateTime createdAt;
+
     @Column(nullable = false)
     private String status;
+
+    public LocalDateTime getBookedAt() {
+        return this.createdAt;
+    }
 }
 
 

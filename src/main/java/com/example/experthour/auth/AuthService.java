@@ -1,5 +1,6 @@
 package com.example.experthour.auth;
 
+import com.example.experthour.common.exception.InvalidCredentialsException;
 import com.example.experthour.user.User;
 import com.example.experthour.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +27,8 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
         if (!encoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid email or password");
+
         }
 
         return user;
