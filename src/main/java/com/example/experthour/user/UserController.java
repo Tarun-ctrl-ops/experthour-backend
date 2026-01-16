@@ -1,6 +1,8 @@
 package com.example.experthour.user;
 
+import com.example.experthour.dto.user.UserResponseDto;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -8,14 +10,14 @@ import java.util.List;
 @CrossOrigin
 public class UserController {
 
-    private final com.example.experthour.user.UserService service;
+    private final UserService service;
 
-    public UserController(com.example.experthour.user.UserService service) {
+    public UserController(UserService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<com.example.experthour.user.User> getUsers() {
+    public List<UserResponseDto> getUsers() {
         return service.getAllUsers();
     }
 }

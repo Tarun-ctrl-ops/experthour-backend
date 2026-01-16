@@ -1,5 +1,6 @@
 package com.example.experthour.user;
-
+import com.example.experthour.dto.user.UserResponseDto;
+import com.example.experthour.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -16,8 +17,11 @@ public class UserService {
         return repo.save(user);
     }
 
-    public List<User> getAllUsers() {
-        return repo.findAll();
+    public List<UserResponseDto> getAllUsers() {
+        return repo.findAll()
+                .stream()
+                .map(UserMapper::toResponseDto)
+                .toList();
     }
 
     public User getByEmail(String email) {
