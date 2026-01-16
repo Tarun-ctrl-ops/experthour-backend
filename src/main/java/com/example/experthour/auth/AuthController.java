@@ -32,5 +32,13 @@ public class AuthController {
                 AuthMapper.toAuthUserDto(user)
         );
     }
+
+    @PostMapping("/dev/reset-password")
+    public void resetPassword() {
+        authService.resetPassword(
+                "arjun@test.com",
+                "arjun123"
+        );
+    }
 }
 
