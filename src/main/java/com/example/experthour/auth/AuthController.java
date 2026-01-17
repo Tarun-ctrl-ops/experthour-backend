@@ -33,12 +33,6 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/dev/reset-password")
-    public void resetPassword() {
-        authService.resetPassword(
-                "arjun@test.com",
-                "arjun123"
-        );
-    }
+
 }
 

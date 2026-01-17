@@ -38,14 +38,7 @@ public class AuthService {
         return jwt.generateToken(user.getEmail(), user.getRole());
     }
 
-    // ⚠️ DEV ONLY — REMOVE AFTER USE
-    public void resetPassword(String email, String newPassword) {
-        User user = repo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setPassword(encoder.encode(newPassword));
-        repo.save(user);
-    }
 
 
 }

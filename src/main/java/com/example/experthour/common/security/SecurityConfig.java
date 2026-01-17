@@ -14,6 +14,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 @Configuration
 public class SecurityConfig {
 
@@ -33,23 +35,23 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-
-                        // 🔓 Public
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/error").permitAll()
+
+                        // ADMIN only
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // USER or ADMIN
+                        .requestMatchers("/api/bookings/**").hasAnyRole("USER", "ADMIN")
+
+                        // Public
                         .requestMatchers("/api/experts/**").permitAll()
                         .requestMatchers("/api/availability/**").permitAll()
 
-                        // 🔐 USER or ADMIN
-                        .requestMatchers("/api/bookings/**").hasAnyRole("USER", "ADMIN")
-
-                        // 🔐 ADMIN only
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                        // 🔐 Any other API
                         .anyRequest().authenticated()
                 )
+
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
