@@ -21,9 +21,6 @@ public class AdminController {
         this.service = service;
     }
 
-
-
-
     @GetMapping("/users")
     public List<AdminUserDto> getAllUsers() {
         return service.getAllUsers();

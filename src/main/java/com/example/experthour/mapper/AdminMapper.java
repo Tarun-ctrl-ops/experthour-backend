@@ -34,9 +34,9 @@ public class AdminMapper {
                 booking.getId(),
                 booking.getUser().getId(),
                 booking.getExpert().getId(),
-                booking.getCreatedAt()
-
+                booking.getBookedAt()
         );
     }
+
 }
 
