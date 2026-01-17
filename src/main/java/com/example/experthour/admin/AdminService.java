@@ -13,8 +13,9 @@ import com.example.experthour.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import org.springframework.transaction.annotation.Transactional;
 @Service
+@Transactional(readOnly = true)
 public class AdminService {
 
     private final UserRepository userRepo;
@@ -63,4 +64,6 @@ public class AdminService {
 
         return AdminMapper.toExpertDto(expert);
     }
+
+
 }
