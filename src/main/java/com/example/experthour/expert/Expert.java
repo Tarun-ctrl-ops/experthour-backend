@@ -20,7 +20,6 @@ public class Expert {
     private String title;
     private String bio;
     private String skills;
-    private boolean approved;
 
     private double pricePerHour;
 
