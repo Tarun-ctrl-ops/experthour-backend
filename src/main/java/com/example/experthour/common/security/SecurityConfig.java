@@ -35,22 +35,17 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/error").permitAll()
-
-                        // ADMIN only
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                        // USER or ADMIN
                         .requestMatchers("/api/bookings/**").hasAnyRole("USER", "ADMIN")
-
-                        // Public
                         .requestMatchers("/api/experts/**").permitAll()
                         .requestMatchers("/api/availability/**").permitAll()
-
                         .anyRequest().authenticated()
                 )
+
 
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -62,11 +57,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of(
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
                 "https://experthour-frontend.vercel.app"
         ));
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
@@ -74,6 +69,8 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
