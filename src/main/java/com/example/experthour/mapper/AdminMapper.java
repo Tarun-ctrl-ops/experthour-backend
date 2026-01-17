@@ -32,11 +32,12 @@ public class AdminMapper {
     public static AdminBookingDto toBookingDto(Booking booking) {
         return new AdminBookingDto(
                 booking.getId(),
-                booking.getUser().getId(),
-                booking.getExpert().getId(),
+                booking.getUser() != null ? booking.getUser().getId() : null,
+                booking.getExpert() != null ? booking.getExpert().getId() : null,
                 booking.getBookedAt()
         );
     }
+
 
 }
 

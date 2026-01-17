@@ -22,48 +22,48 @@ public class AdminService {
     private final ExpertRepository expertRepo;
     private final BookingRepository bookingRepo;
 
-    public AdminService(UserRepository userRepo,
-                        ExpertRepository expertRepo,
-                        BookingRepository bookingRepo) {
+    public AdminService(
+            UserRepository userRepo,
+            ExpertRepository expertRepo,
+            BookingRepository bookingRepo
+    ) {
         this.userRepo = userRepo;
         this.expertRepo = expertRepo;
         this.bookingRepo = bookingRepo;
     }
 
-    // ✅ USERS
+    // USERS
     public List<AdminUserDto> getAllUsers() {
         return userRepo.findAll()
                 .stream()
-                .map(AdminMapper::toUserDto)
+                .map(user -> AdminMapper.toUserDto(user))
                 .toList();
     }
 
-    // ✅ EXPERTS
+    // EXPERTS
     public List<AdminExpertDto> getAllExperts() {
         return expertRepo.findAll()
                 .stream()
-                .map(AdminMapper::toExpertDto)
+                .map(expert -> AdminMapper.toExpertDto(expert))
                 .toList();
     }
 
-    // ✅ BOOKINGS
+    // BOOKINGS
     public List<AdminBookingDto> getAllBookings() {
         return bookingRepo.findAll()
                 .stream()
-                .map(AdminMapper::toBookingDto)
+                .map(booking -> AdminMapper.toBookingDto(booking))
                 .toList();
     }
 
-    // ✅ APPROVE EXPERT
+    // APPROVE EXPERT
+    @Transactional
     public AdminExpertDto approveExpert(Long expertId) {
         Expert expert = expertRepo.findById(expertId)
                 .orElseThrow(() -> new RuntimeException("Expert not found"));
 
         expert.setApproved(true);
-        expertRepo.save(expert);
-
-        return AdminMapper.toExpertDto(expert);
+        return AdminMapper.toExpertDto(expertRepo.save(expert));
     }
-
-
 }
+
