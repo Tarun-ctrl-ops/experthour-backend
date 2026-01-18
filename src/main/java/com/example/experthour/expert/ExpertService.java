@@ -13,12 +13,24 @@ public class ExpertService {
     }
 
     public Expert create(Expert expert) {
+        expert.setStatus(ExpertStatus.PENDING);
+        expert.setAvailableFrom("");
+        expert.setAvailableTo("");
         return expertRepository.save(expert);
     }
+
+    public List<Expert> getAllApproved() {
+        return expertRepository.findByStatus(ExpertStatus.APPROVED);
+    }
+
+
 
     public List<Expert> getAll() {
         return expertRepository.findAll();
     }
+
+
+
 
     public Expert updateAvailability(Long expertId, String from, String to) {
         Expert expert = expertRepository.findById(expertId).orElseThrow();

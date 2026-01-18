@@ -18,7 +18,7 @@ public class ExpertController {
 
     @GetMapping
     public List<Expert> getAll() {
-        return service.getAll();
+        return service.getAllApproved();
     }
 
     @PostMapping
