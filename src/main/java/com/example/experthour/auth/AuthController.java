@@ -2,6 +2,7 @@ package com.example.experthour.auth;
 
 import com.example.experthour.dto.auth.LoginRequestDto;
 import com.example.experthour.dto.auth.LoginResponseDto;
+import com.example.experthour.dto.auth.RegisterRequestDto;
 import com.example.experthour.mapper.AuthMapper;
 import com.example.experthour.user.User;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,16 @@ public class AuthController {
                 AuthMapper.toAuthUserDto(user)
         );
     }
+
+    @PostMapping("/register")
+    public void register(@RequestBody RegisterRequestDto request) {
+        authService.register(
+                request.getName(),
+                request.getEmail(),
+                request.getPassword()
+        );
+    }
+
 
 
 }
