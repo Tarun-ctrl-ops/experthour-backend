@@ -16,6 +16,9 @@ public class Expert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private ExpertStatus status;
+
     private String name;
     private String title;
     private String bio;
@@ -26,6 +29,8 @@ public class Expert {
     // Availability
     private String availableFrom;
     private String availableTo;
+
+
 
 
 }

@@ -7,6 +7,7 @@ import com.example.experthour.dto.admin.AdminExpertDto;
 import com.example.experthour.dto.admin.AdminUserDto;
 import com.example.experthour.expert.Expert;
 import com.example.experthour.expert.ExpertRepository;
+import com.example.experthour.expert.ExpertStatus;
 import com.example.experthour.mapper.AdminMapper;
 import com.example.experthour.user.User;
 import com.example.experthour.user.UserRepository;
@@ -62,7 +63,8 @@ public class AdminService {
         Expert expert = expertRepo.findById(expertId)
                 .orElseThrow(() -> new RuntimeException("Expert not found"));
 
-        expert.setApproved(true);
+        expert.setStatus(ExpertStatus.APPROVED);
+
         return AdminMapper.toExpertDto(expertRepo.save(expert));
     }
 }

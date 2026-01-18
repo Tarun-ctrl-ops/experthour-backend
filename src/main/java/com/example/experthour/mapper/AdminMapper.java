@@ -23,8 +23,8 @@ public class AdminMapper {
     public static AdminExpertDto toExpertDto(Expert expert) {
         return new AdminExpertDto(
                 expert.getId(),
-                expert.getName(),
-                expert.isApproved()
+                expert.getName()
+
         );
     }
 

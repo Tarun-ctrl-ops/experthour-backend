@@ -6,7 +6,7 @@ public class AdminExpertDto {
     private String name;
     private boolean approved;
 
-    public AdminExpertDto(Long id, String name, boolean approved) {
+    public AdminExpertDto(Long id, String name) {
         this.id = id;
         this.name = name;
         this.approved = approved;
