@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/admin")
 @CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
+@RestController
+@RequestMapping("/api/admin")
 public class AdminController {
 
     private final AdminService service;

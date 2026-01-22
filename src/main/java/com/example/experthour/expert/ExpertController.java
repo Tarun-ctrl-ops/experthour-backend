@@ -1,4 +1,6 @@
 package com.example.experthour.expert;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,7 @@ public class ExpertController {
         return service.create(expert);
     }
 
+    @PreAuthorize("hasRole('EXPERT')")
     @PutMapping("/{id}/availability")
     public Expert setAvailability(
             @PathVariable Long id,

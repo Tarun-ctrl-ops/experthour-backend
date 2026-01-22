@@ -1,4 +1,6 @@
 package com.example.experthour.booking;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
+@PreAuthorize("hasRole('USER')")
 @RequiredArgsConstructor
 public class BookingController {
 
