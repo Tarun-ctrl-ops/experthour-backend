@@ -20,8 +20,9 @@ public class ExpertService {
     }
 
     public List<Expert> getAllApproved() {
-        return expertRepository.findByStatus(ExpertStatus.APPROVED);
+        return expertRepository.findAll();
     }
+
 
 
 
