@@ -13,7 +13,7 @@ public class ExpertService {
     }
 
     public Expert create(Expert expert) {
-        expert.setStatus(ExpertStatus.PENDING);
+        expert.setStatus(ExpertStatus.APPROVED);
         expert.setAvailableFrom("");
         expert.setAvailableTo("");
         return expertRepository.save(expert);

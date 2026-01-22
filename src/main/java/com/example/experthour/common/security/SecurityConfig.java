@@ -2,6 +2,7 @@ package com.example.experthour.common.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,10 +40,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/bookings/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/experts/**").permitAll()
-                        .requestMatchers("/api/availability/**").permitAll()
+                        .requestMatchers("/api/admin/**").authenticated()
+                        .requestMatchers("/api/bookings/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/experts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/experts/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/experts/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
 
@@ -69,9 +72,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
