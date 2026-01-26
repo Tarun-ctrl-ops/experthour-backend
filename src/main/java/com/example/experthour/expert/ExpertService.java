@@ -22,17 +22,9 @@ public class ExpertService {
     public List<Expert> getAllApproved() {
         return expertRepository.findAll();
     }
-
-
-
-
     public List<Expert> getAll() {
         return expertRepository.findAll();
     }
-
-
-
-
     public Expert updateAvailability(Long expertId, String from, String to) {
         Expert expert = expertRepository.findById(expertId).orElseThrow();
         expert.setAvailableFrom(from);

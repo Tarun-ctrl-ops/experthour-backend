@@ -16,5 +16,3 @@ public class AdminExpertDto {
     public String getName() { return name; }
     public boolean isApproved() { return approved; }
 }
-
-

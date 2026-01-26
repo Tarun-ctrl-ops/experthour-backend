@@ -52,7 +52,4 @@ public class AuthService {
 
         return repo.save(user);
     }
-
-
 }
-

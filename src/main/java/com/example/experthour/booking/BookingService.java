@@ -44,5 +44,3 @@ public class BookingService {
         return bookingRepository.findByExpertId(expertId);
     }
 }
-
-

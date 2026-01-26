@@ -41,5 +41,3 @@ public class AdminController {
         return service.approveExpert(id);
     }
 }
-
-

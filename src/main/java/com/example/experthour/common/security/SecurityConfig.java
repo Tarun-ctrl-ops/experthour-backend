@@ -16,8 +16,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
@@ -38,27 +36,30 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        // Preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Public auth & system
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/admin/**").authenticated()
-                        .requestMatchers("/api/bookings/**").authenticated()
+
+                        // Experts
                         .requestMatchers(HttpMethod.GET, "/api/experts/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/experts/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/experts/**").authenticated()
 
+                        // Bookings (JWT required)
+                        .requestMatchers("/api/bookings/**").authenticated()
+
+                        // Everything else
                         .anyRequest().authenticated()
                 )
-
-
-
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ THIS WAS MISSING
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -74,9 +75,11 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
+
 

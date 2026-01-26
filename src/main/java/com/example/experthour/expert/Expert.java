@@ -29,8 +29,4 @@ public class Expert {
     // Availability
     private String availableFrom;
     private String availableTo;
-
-
-
-
 }

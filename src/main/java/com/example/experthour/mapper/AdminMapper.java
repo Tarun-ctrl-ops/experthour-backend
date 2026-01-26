@@ -37,7 +37,5 @@ public class AdminMapper {
                 booking.getBookedAt()
         );
     }
-
-
 }
 
