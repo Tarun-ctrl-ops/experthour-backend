@@ -16,7 +16,7 @@ public class User {
     private String email;
 
     private String password;
-
+    @Column(nullable = false)
     private String role; // USER, EXPERT, ADMIN
 
     public User() {}

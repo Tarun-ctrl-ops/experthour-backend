@@ -1,7 +1,10 @@
 package com.example.experthour.expert;
+
+import com.example.experthour.dto.expert.ExpertResponseDto;
+import com.example.experthour.expert.Expert;
+import com.example.experthour.expert.ExpertService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,35 +12,33 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/experts")
-@CrossOrigin
+@RequiredArgsConstructor
 public class ExpertController {
 
     private final ExpertService service;
 
-    public ExpertController(ExpertService service) {
-        this.service = service;
-    }
-
     @GetMapping
-    public List<Expert> getAll() {
-        return service.getAll();
+    public List<ExpertResponseDto> getAll() {
+        return service.getAllApproved()
+                .stream()
+                .map(service::toDto)
+                .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public Expert create(@RequestBody Expert expert) {
-        return service.create(expert);
+    public ExpertResponseDto create(@RequestBody Expert expert) {
+        return service.toDto(service.create(expert));
     }
 
     @PreAuthorize("hasRole('EXPERT')")
     @PutMapping("/{id}/availability")
-    public Expert setAvailability(
+    public ExpertResponseDto setAvailability(
             @PathVariable Long id,
             @RequestBody Map<String, String> body
     ) {
-        return service.updateAvailability(
-                id,
-                body.get("from"),
-                body.get("to")
+        return service.toDto(
+                service.updateAvailability(id, body.get("from"), body.get("to"))
         );
     }
 }

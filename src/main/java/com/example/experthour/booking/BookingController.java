@@ -1,4 +1,5 @@
 package com.example.experthour.booking;
+import com.example.experthour.dto.booking.BookingResponseDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 
@@ -19,23 +20,22 @@ public class BookingController {
     private final BookingService service;
 
     @PostMapping
-    public Booking create(@RequestBody Map<String, String> req, Principal principal) {
-
-        Long expertId = Long.parseLong(req.get("expertId"));
-        LocalDateTime start = LocalDateTime.parse(req.get("start"));
-        LocalDateTime end = LocalDateTime.parse(req.get("end"));
-
-        return service.createBooking(principal.getName(), expertId, start, end);
+    public BookingResponseDto create(
+            @RequestBody Map<String, String> req,
+            Principal principal
+    ) {
+        return service.createBooking(
+                principal.getName(),
+                Long.parseLong(req.get("expertId")),
+                LocalDateTime.parse(req.get("start")),
+                LocalDateTime.parse(req.get("end"))
+        );
     }
 
     @GetMapping("/my")
-    public List<Booking> myBookings(Principal principal) {
+    public List<BookingResponseDto> myBookings(Principal principal) {
         return service.getUserBookings(principal.getName());
     }
-
-    @GetMapping("/expert/{id}")
-    public List<Booking> expertBookings(@PathVariable Long id) {
-        return service.getExpertBookings(id);
-    }
 }
+
 
