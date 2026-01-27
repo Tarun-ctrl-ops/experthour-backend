@@ -6,36 +6,46 @@ import com.example.experthour.dto.admin.AdminExpertDto;
 import com.example.experthour.dto.admin.AdminUserDto;
 import com.example.experthour.expert.Expert;
 import com.example.experthour.user.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdminMapper {
 
-    // USERS
-    public static AdminUserDto toUserDto(User user) {
+    // ---------- USERS ----------
+    public AdminUserDto toUserDto(User user) {
         return new AdminUserDto(
                 user.getId(),
-                user.getName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole().name(),   // enum → OK
+                user.isEnabled()
         );
     }
 
-    // EXPERTS
-    public static AdminExpertDto toExpertDto(Expert expert) {
+    // ---------- EXPERTS ----------
+    public AdminExpertDto toExpertDto(Expert expert) {
         return new AdminExpertDto(
                 expert.getId(),
-                expert.getName()
-
+                expert.getName(),        // String → DIRECT
+                expert.getTitle(),
+                expert.getBio(),
+                expert.getSkills(),
+                expert.getPricePerHour(),
+                expert.getStatus().name() // enum → OK
         );
     }
 
-    // BOOKINGS
-    public static AdminBookingDto toBookingDto(Booking booking) {
+    // ---------- BOOKINGS ----------
+    public AdminBookingDto toBookingDto(Booking booking) {
         return new AdminBookingDto(
                 booking.getId(),
-                booking.getUser() != null ? booking.getUser().getId() : null,
-                booking.getExpert() != null ? booking.getExpert().getId() : null,
-                booking.getBookedAt()
+                booking.getUser().getEmail(),
+                booking.getExpert().getName(),
+                booking.getStartTime(),
+                booking.getEndTime(),
+                booking.getCreatedAt(),
+                booking.getStatus().name()
         );
     }
 }
+
 

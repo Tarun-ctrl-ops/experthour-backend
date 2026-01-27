@@ -1,8 +1,7 @@
 package com.example.experthour.expert;
 
+import com.example.experthour.dto.expert.AvailabilityDto;
 import com.example.experthour.dto.expert.ExpertResponseDto;
-import com.example.experthour.expert.Expert;
-import com.example.experthour.expert.ExpertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,26 +18,26 @@ public class ExpertController {
 
     @GetMapping
     public List<ExpertResponseDto> getAll() {
-        return service.getAllApproved()
-                .stream()
-                .map(service::toDto)
-                .toList();
+        return service.getAll();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ExpertResponseDto create(@RequestBody Expert expert) {
-        return service.toDto(service.create(expert));
+        return service.create(expert);
     }
 
     @PreAuthorize("hasRole('EXPERT')")
-    @PutMapping("/{id}/availability")
-    public ExpertResponseDto setAvailability(
+    @PostMapping("/{id}/availability")
+    public void saveAvailability(
             @PathVariable Long id,
-            @RequestBody Map<String, String> body
+            @RequestBody AvailabilityDto dto
     ) {
-        return service.toDto(
-                service.updateAvailability(id, body.get("from"), body.get("to"))
-        );
+        service.saveAvailability(id, dto);
+    }
+
+    @GetMapping("/{id}/availability")
+    public Map<String, Boolean> getAvailability(@PathVariable Long id) {
+        return service.getAvailability(id);
     }
 }

@@ -1,46 +1,50 @@
 package com.example.experthour.expert;
 
+import com.example.experthour.dto.expert.AvailabilityDto;
 import com.example.experthour.dto.expert.ExpertResponseDto;
-import com.example.experthour.expert.Expert;
-import com.example.experthour.expert.ExpertStatus;
+import com.example.experthour.mapper.ExpertMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class ExpertService {
 
-    private final ExpertRepository repo;
+    private final ExpertRepository expertRepository;
+    private final ExpertMapper expertMapper;
 
-    public Expert create(Expert expert) {
+    public List<ExpertResponseDto> getAll() {
+        return expertRepository.findAll()
+                .stream()
+                .map(expertMapper::toDto)
+                .toList();
+    }
+
+    public ExpertResponseDto create(Expert expert) {
         expert.setStatus(ExpertStatus.APPROVED);
-        return repo.save(expert);
+        return expertMapper.toDto(expertRepository.save(expert));
     }
 
-    public List<Expert> getAllApproved() {
-        return repo.findByStatus(ExpertStatus.APPROVED);
+    public void saveAvailability(Long id, AvailabilityDto dto) {
+        Expert expert = expertRepository.findById(id).orElseThrow();
+        expert.setAvailableFrom(String.valueOf(dto.from()));
+        expert.setAvailableTo(String.valueOf(dto.to()));
+        expertRepository.save(expert);
     }
 
-    public Expert updateAvailability(Long id, String from, String to) {
-        Expert expert = repo.findById(id).orElseThrow();
-        expert.setAvailableFrom(from);
-        expert.setAvailableTo(to);
-        return repo.save(expert);
-    }
-
-    public ExpertResponseDto toDto(Expert e) {
-        return new ExpertResponseDto(
-                e.getId(),
-                e.getName(),
-                e.getTitle(),
-                e.getBio(),
-                e.getSkills(),
-                e.getPricePerHour(),
-                e.getAvailableFrom(),
-                e.getAvailableTo()
+    public Map<String, Boolean> getAvailability(Long id) {
+        Expert expert = expertRepository.findById(id).orElseThrow();
+        return Map.of(
+                "available", expert.getAvailableFrom() != null && expert.getAvailableTo() != null
         );
     }
-}
+    public void approveExpert(Long id) {
+        Expert expert = expertRepository.findById(id).orElseThrow();
+        expert.setStatus(ExpertStatus.APPROVED);
+        expertRepository.save(expert);
+    }
 
+}

@@ -1,5 +1,6 @@
 package com.example.experthour.expert;
 
+import com.example.experthour.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,4 +30,11 @@ public class Expert {
     // Availability
     private String availableFrom;
     private String availableTo;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    @Column(columnDefinition = "TEXT")
+    private String availabilityJson;
+
+
 }

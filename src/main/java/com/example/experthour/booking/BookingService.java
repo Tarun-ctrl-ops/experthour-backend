@@ -1,6 +1,5 @@
 package com.example.experthour.booking;
 
-import com.example.experthour.dto.booking.BookingResponseDto;
 import com.example.experthour.expert.Expert;
 import com.example.experthour.expert.ExpertRepository;
 import com.example.experthour.user.User;
@@ -15,45 +14,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingService {
 
-    private final BookingRepository bookingRepo;
-    private final UserRepository userRepo;
-    private final ExpertRepository expertRepo;
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final ExpertRepository expertRepository;
 
-    public BookingResponseDto createBooking(
-            String email,
+    public Booking createBooking(
+            String userEmail,
             Long expertId,
             LocalDateTime start,
             LocalDateTime end
     ) {
-        User user = userRepo.findByEmail(email).orElseThrow();
-        Expert expert = expertRepo.findById(expertId).orElseThrow();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Expert expert = expertRepository.findById(expertId)
+                .orElseThrow(() -> new RuntimeException("Expert not found"));
 
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setExpert(expert);
         booking.setStartTime(start);
         booking.setEndTime(end);
-        booking.setStatus("CONFIRMED");
+        booking.setPrice(expert.getPricePerHour());
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setCreatedAt(LocalDateTime.now());
 
-        Booking saved = bookingRepo.save(booking);
-        return toDto(saved);
+        return bookingRepository.save(booking);
     }
 
-    public List<BookingResponseDto> getUserBookings(String email) {
-        return bookingRepo.findByUserEmail(email)
-                .stream()
-                .map(this::toDto)
-                .toList();
+    public List<Booking> getUserBookings(String email) {
+        return bookingRepository.findByUserEmail(email);
     }
 
-    private BookingResponseDto toDto(Booking b) {
-        return new BookingResponseDto(
-                b.getId(),
-                b.getExpert().getId(),
-                b.getExpert().getName(),
-                b.getStartTime().toString(),
-                b.getEndTime().toString(),
-                b.getStatus()
-        );
+    public List<Booking> getExpertBookings(Long expertId) {
+        return bookingRepository.findByExpertId(expertId);
     }
 }

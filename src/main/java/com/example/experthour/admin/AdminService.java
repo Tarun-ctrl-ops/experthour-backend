@@ -11,61 +11,40 @@ import com.example.experthour.expert.ExpertStatus;
 import com.example.experthour.mapper.AdminMapper;
 import com.example.experthour.user.User;
 import com.example.experthour.user.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 @Service
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class AdminService {
 
-    private final UserRepository userRepo;
-    private final ExpertRepository expertRepo;
-    private final BookingRepository bookingRepo;
+    private final UserRepository userRepository;
+    private final ExpertRepository expertRepository;
+    private final BookingRepository bookingRepository;
+    private final AdminMapper adminMapper;
 
-    public AdminService(
-            UserRepository userRepo,
-            ExpertRepository expertRepo,
-            BookingRepository bookingRepo
-    ) {
-        this.userRepo = userRepo;
-        this.expertRepo = expertRepo;
-        this.bookingRepo = bookingRepo;
-    }
-
-    // USERS
     public List<AdminUserDto> getAllUsers() {
-        return userRepo.findAll()
+        return userRepository.findAll()
                 .stream()
-                .map(user -> AdminMapper.toUserDto(user))
+                .map(adminMapper::toUserDto)
                 .toList();
     }
 
-    // EXPERTS
     public List<AdminExpertDto> getAllExperts() {
-        return expertRepo.findAll()
+        return expertRepository.findAll()
                 .stream()
-                .map(expert -> AdminMapper.toExpertDto(expert))
+                .map(adminMapper::toExpertDto)
                 .toList();
     }
 
-    // BOOKINGS
     public List<AdminBookingDto> getAllBookings() {
-        return bookingRepo.findAll()
+        return bookingRepository.findAll()
                 .stream()
-                .map(booking -> AdminMapper.toBookingDto(booking))
+                .map(adminMapper::toBookingDto)
                 .toList();
-    }
-
-    // APPROVE EXPERT
-    @Transactional
-    public AdminExpertDto approveExpert(Long expertId) {
-        Expert expert = expertRepo.findById(expertId)
-                .orElseThrow(() -> new RuntimeException("Expert not found"));
-
-        expert.setStatus(ExpertStatus.APPROVED);
-
-        return AdminMapper.toExpertDto(expertRepo.save(expert));
     }
 }
+
 

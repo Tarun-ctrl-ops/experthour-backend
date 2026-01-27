@@ -11,6 +11,7 @@ public class User {
     private Long id;
 
     private String name;
+    private boolean enabled;
 
     @Column(unique = true)
     private String email;

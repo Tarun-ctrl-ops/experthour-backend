@@ -20,12 +20,10 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(optional = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "expert_id", nullable = false)
+    @ManyToOne(optional = false)
     private Expert expert;
 
     @Column(nullable = false)
@@ -34,14 +32,16 @@ public class Booking {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private double price;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookingStatus status;
 
     @Column(nullable = false)
-    private String status;
-
-    public LocalDateTime getBookedAt() {
-        return this.createdAt;
-    }
+    private LocalDateTime createdAt;
 }
+
 
 

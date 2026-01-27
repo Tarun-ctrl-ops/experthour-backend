@@ -40,4 +40,9 @@ public class AdminController {
     public AdminExpertDto approveExpert(@PathVariable Long id) {
         return service.approveExpert(id);
     }
+    @PostMapping("/experts/{id}/approve")
+    public void approveExpert(@PathVariable Long id) {
+        expertService.approveExpert(id);
+    }
+
 }
